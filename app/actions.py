@@ -83,6 +83,24 @@ def get_pokemons(database: Session, skip: int = 0, limit: int = 100):
     """
     return database.query(models.Pokemon).offset(skip).limit(limit).all()
 
+def get_random_pokemons(database : Session, limit: int = 100):
+    """
+        Select 3 random pokemons in db and return informations
+        Default limit is 3
+    """
+    count = len(database.query(models.Pokemon).limit(limit).all())
+    pokemons = database.query(models.Pokemon).limit(limit).all()
+    random_pokemon = []
+    while len(random_pokemon) < 3:
+        number = random.randint(1, count) -1
+        if pokemons[number] in random_pokemon:
+            continue
+        random_pokemon.append(pokemons[number])
+
+    for pokemon in random_pokemon:
+        pokemon.stats = get_pokemon_stats(pokemon.id)
+    return random_pokemon
+
 def fight_pokemons(database: Session, first_pokemon_id: int, second_pokemon_id: int):
     """
         Fait s'affronter 2 pokémons
@@ -102,19 +120,3 @@ def fight_pokemons(database: Session, first_pokemon_id: int, second_pokemon_id: 
         winner = second_pokemon
 
     return schemas.PokemonFightResult(winner=winner.custom_name, draw=winner is None)
-
-def get_random_pokemons(database : Session, limit: int = 100):
-    """
-        Select 3 random pokemons in db and return informations
-        Default limit is 3
-    """
-    count = len(database.query(models.Pokemon).limit(limit).all())
-    pokemons = database.query(models.Pokemon).limit(limit).all()
-    random_pokemon = []
-    while len(random_pokemon) < 3:
-        number = random.randint(1, count) -1
-        if pokemons[number] in random_pokemon:
-            continue
-        else:
-            random_pokemon.append(pokemons[number])
-    return random_pokemon
