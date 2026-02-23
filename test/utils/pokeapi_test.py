@@ -117,24 +117,38 @@ def test_get_pokemon_name_parametrized(mocker, api_id, expected_name):
 # get_pokemon_stats
 # ---------------------------------------------------------------------------
 
-def test_get_pokemon_stats_returns_false():
+def test_get_pokemon_stats_returns_stats(mocker):
+    # Arrange
+    expected_stats = [{"stat": {"name": "hp"}, "base_stat": 45}]
+    mocker.patch(
+        "app.utils.pokeapi.get_pokemon_data",
+        return_value={"stats": expected_stats},
+    )
+
     # Act
     result = get_pokemon_stats(1)
 
     # Assert
-    assert result is False
+    assert result == expected_stats
 
 
 stats_ids = [1, 25, 150, 999]
 
 
 @pytest.mark.parametrize("api_id", stats_ids)
-def test_get_pokemon_stats_always_false_parametrized(api_id):
+def test_get_pokemon_stats_parametrized(mocker, api_id):
+    # Arrange
+    expected_stats = [{"stat": {"name": "hp"}, "base_stat": api_id}]
+    mocker.patch(
+        "app.utils.pokeapi.get_pokemon_data",
+        return_value={"stats": expected_stats},
+    )
+
     # Act
     result = get_pokemon_stats(api_id)
 
     # Assert
-    assert result is False
+    assert result == expected_stats
 
 
 # ---------------------------------------------------------------------------
@@ -190,21 +204,64 @@ def test_battle_pokemon_always_draw_parametrized(mocker, first_id, second_id):
 # battle_compare_stats
 # ---------------------------------------------------------------------------
 
-def test_battle_compare_stats_returns_none():
-    # Act
-    result = battle_compare_stats({}, {})
-
-    # Assert
-    assert result is None
-
-
-def test_battle_compare_stats_accepts_any_stats():
+def test_battle_compare_stats_first_wins():
     # Arrange
-    stats_a = {"hp": 45, "attack": 49, "defense": 49}
-    stats_b = {"hp": 39, "attack": 52, "defense": 43}
+    strong = [{"stat": {"name": "hp"}, "base_stat": 100}, {"stat": {"name": "attack"}, "base_stat": 100}]
+    weak   = [{"stat": {"name": "hp"}, "base_stat": 10},  {"stat": {"name": "attack"}, "base_stat": 10}]
 
     # Act
-    result = battle_compare_stats(stats_a, stats_b)
+    result = battle_compare_stats(strong, weak)
 
     # Assert
-    assert result is None
+    assert result == 1
+
+
+def test_battle_compare_stats_second_wins():
+    # Arrange
+    weak   = [{"stat": {"name": "hp"}, "base_stat": 10},  {"stat": {"name": "attack"}, "base_stat": 10}]
+    strong = [{"stat": {"name": "hp"}, "base_stat": 100}, {"stat": {"name": "attack"}, "base_stat": 100}]
+
+    # Act
+    result = battle_compare_stats(weak, strong)
+
+    # Assert
+    assert result == -1
+
+
+def test_battle_compare_stats_draw():
+    # Arrange
+    stats = [{"stat": {"name": "hp"}, "base_stat": 45}, {"stat": {"name": "attack"}, "base_stat": 49}]
+
+    # Act
+    result = battle_compare_stats(stats, stats)
+
+    # Assert
+    assert result == 0
+
+
+battle_compare_stats_cases = [
+    (
+        [{"stat": {"name": "hp"}, "base_stat": 80}, {"stat": {"name": "speed"}, "base_stat": 90}],
+        [{"stat": {"name": "hp"}, "base_stat": 40}, {"stat": {"name": "speed"}, "base_stat": 45}],
+        1,
+    ),
+    (
+        [{"stat": {"name": "hp"}, "base_stat": 40}, {"stat": {"name": "speed"}, "base_stat": 45}],
+        [{"stat": {"name": "hp"}, "base_stat": 80}, {"stat": {"name": "speed"}, "base_stat": 90}],
+        -1,
+    ),
+    (
+        [{"stat": {"name": "hp"}, "base_stat": 50}],
+        [{"stat": {"name": "hp"}, "base_stat": 50}],
+        0,
+    ),
+]
+
+
+@pytest.mark.parametrize("first_stats, second_stats, expected", battle_compare_stats_cases)
+def test_battle_compare_stats_parametrized(first_stats, second_stats, expected):
+    # Act
+    result = battle_compare_stats(first_stats, second_stats)
+
+    # Assert
+    assert result == expected
