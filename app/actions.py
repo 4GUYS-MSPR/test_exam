@@ -1,7 +1,9 @@
+import random
+
 from sqlalchemy.orm import Session
+
 from . import models, schemas
 from .utils.pokeapi import battle_compare_stats, get_pokemon_name, get_pokemon_stats
-
 
 def get_trainer(database: Session, trainer_id: int):
     """
@@ -81,7 +83,28 @@ def get_pokemons(database: Session, skip: int = 0, limit: int = 100):
     """
     return database.query(models.Pokemon).offset(skip).limit(limit).all()
 
+def get_random_pokemons(database : Session, limit: int = 100):
+    """
+        Select 3 random pokemons in db and return informations
+        Default limit is 3
+    """
+    count = len(database.query(models.Pokemon).limit(limit).all())
+    pokemons = database.query(models.Pokemon).limit(limit).all()
+    random_pokemon = []
+    while len(random_pokemon) < 3:
+        number = random.randint(1, count) -1
+        if pokemons[number] in random_pokemon:
+            continue
+        random_pokemon.append(pokemons[number])
+
+    for pokemon in random_pokemon:
+        pokemon.stats = get_pokemon_stats(pokemon.id)
+    return random_pokemon
+
 def fight_pokemons(database: Session, first_pokemon_id: int, second_pokemon_id: int):
+    """
+        Fait s'affronter 2 pokémons
+    """
     first_pokemon = get_pokemon(database, first_pokemon_id)
     second_pokemon = get_pokemon(database, second_pokemon_id)
 

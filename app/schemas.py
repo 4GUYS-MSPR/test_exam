@@ -39,8 +39,9 @@ class Pokemon(PokemonBase):
     class Config:
         orm_mode = True
 
-    
-        
+class PokemonWithStats(Pokemon):
+    stats : list
+
 class PokemonFight(BaseModel):
     first_pokemon_id: int
     second_pokemon_id: int
@@ -48,7 +49,8 @@ class PokemonFight(BaseModel):
 class PokemonFightResult(BaseModel):
     winner: Optional[str] = None
     draw: bool = False
-
+    
+#
 #  TRAINER
 #
 class TrainerBase(BaseModel):
