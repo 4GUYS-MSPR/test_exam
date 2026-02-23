@@ -1,9 +1,9 @@
+import random
+
 from sqlalchemy.orm import Session
+
 from . import models, schemas
 from .utils.pokeapi import battle_compare_stats, get_pokemon_name, get_pokemon_stats
-import random
-from .utils.pokeapi import get_pokemon_name
-
 
 def get_trainer(database: Session, trainer_id: int):
     """
@@ -84,6 +84,9 @@ def get_pokemons(database: Session, skip: int = 0, limit: int = 100):
     return database.query(models.Pokemon).offset(skip).limit(limit).all()
 
 def fight_pokemons(database: Session, first_pokemon_id: int, second_pokemon_id: int):
+    """
+        Fait s'affronter 2 pokémons
+    """
     first_pokemon = get_pokemon(database, first_pokemon_id)
     second_pokemon = get_pokemon(database, second_pokemon_id)
 

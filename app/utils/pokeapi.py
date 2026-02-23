@@ -34,6 +34,9 @@ def battle_pokemon(first_api_id, second_api_id):
     return {'winner': 'draw'}
 
 def battle_compare_stats(first_pokemon_stats, second_pokemon_stats):
+    """
+        Compare stats of two pokemon to choose the winner
+    """
     first_stats = {stat['stat']['name']: stat['base_stat'] for stat in first_pokemon_stats}
     second_stats = {stat['stat']['name']: stat['base_stat'] for stat in second_pokemon_stats}
 
