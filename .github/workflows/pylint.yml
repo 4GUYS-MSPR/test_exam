@@ -33,6 +33,8 @@ jobs:
       run: |
         # Génère un fichier .xml pour les outils tiers et un résumé texte
         pytest --cov=./ --cov-report=xml --cov-report=term-missing
+      env:
+        PYTHONPATH: .
 
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4
