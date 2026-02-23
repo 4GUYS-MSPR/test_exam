@@ -49,7 +49,7 @@ class PokemonFight(BaseModel):
 class PokemonFightResult(BaseModel):
     winner: Optional[str] = None
     draw: bool = False
-    
+
 #
 #  TRAINER
 #
