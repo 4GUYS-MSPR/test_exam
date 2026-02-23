@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from . import models, schemas
-from .utils.pokeapi import get_pokemon_name
+from .utils.pokeapi import battle_compare_stats, get_pokemon_name, get_pokemon_stats
 
 
 def get_trainer(database: Session, trainer_id: int):
@@ -80,3 +80,20 @@ def get_pokemons(database: Session, skip: int = 0, limit: int = 100):
         Default limit is 100
     """
     return database.query(models.Pokemon).offset(skip).limit(limit).all()
+
+def fight_pokemons(database: Session, first_pokemon_id: int, second_pokemon_id: int):
+    first_pokemon = get_pokemon(database, first_pokemon_id)
+    second_pokemon = get_pokemon(database, second_pokemon_id)
+
+    battle_result = battle_compare_stats(
+        get_pokemon_stats(first_pokemon.api_id),
+        get_pokemon_stats(second_pokemon.api_id),
+    )
+
+    winner = None
+    if battle_result > 0:
+        winner = first_pokemon
+    elif battle_result < 0:
+        winner = second_pokemon
+
+    return schemas.PokemonFightResult(winner=winner.custom_name, draw=winner is None)
