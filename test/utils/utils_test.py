@@ -1,6 +1,6 @@
 from datetime import date
 
-from app.utils.utils import age_from_birthdate
+from app.utils.utils import age_from_birthdate, get_db
 
 
 def test_birthday_is_today():
@@ -63,3 +63,39 @@ def test_newborn_age_is_zero():
 
     # Assert
     assert res == 0
+
+
+# ---------------------------------------------------------------------------
+# get_db
+# ---------------------------------------------------------------------------
+
+def test_get_db_yields_a_session(mocker):
+    """get_db should yield a database session"""
+    # Arrange
+    mock_session = mocker.MagicMock()
+    mocker.patch("app.utils.utils.SESSION_LOCAL", return_value=mock_session)
+
+    # Act
+    gen = get_db()
+    session = next(gen)
+
+    # Assert
+    assert session is mock_session
+
+
+def test_get_db_closes_session_after_use(mocker):
+    """get_db should close the session once the generator is exhausted"""
+    # Arrange
+    mock_session = mocker.MagicMock()
+    mocker.patch("app.utils.utils.SESSION_LOCAL", return_value=mock_session)
+
+    # Act
+    gen = get_db()
+    next(gen)
+    try:
+        next(gen)
+    except StopIteration:
+        pass
+
+    # Assert
+    mock_session.close.assert_called_once()
