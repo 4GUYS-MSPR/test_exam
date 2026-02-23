@@ -1,10 +1,12 @@
 from typing import List
 from sqlalchemy.orm import Session
+
 from fastapi import APIRouter,  Depends, HTTPException
+
 from app.utils.utils import get_db
 from app import actions, schemas
-router = APIRouter()
 
+router = APIRouter()
 
 @router.post("/", response_model=schemas.Trainer)
 def create_trainer(trainer: schemas.TrainerCreate, database: Session = Depends(get_db)):

@@ -6,7 +6,6 @@ from app.utils.utils import get_db
 
 router = APIRouter()
 
-
 @router.get("/", response_model=List[schemas.Pokemon])
 def get_pokemons(skip: int = 0, limit: int = 100, database: Session = Depends(get_db)):
     """

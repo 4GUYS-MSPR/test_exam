@@ -1,7 +1,6 @@
 import requests
 
-base_url = "https://pokeapi.co/api/v2"
-
+BASE_URL = "https://pokeapi.co/api/v2"
 
 def get_pokemon_name(api_id):
     """
@@ -19,18 +18,20 @@ def get_pokemon_data(api_id):
     """
         Get data of pokemon name from the API pokeapi
     """
-    return requests.get(f"{base_url}/pokemon/{api_id}", timeout=10).json()
-
+    return requests.get(f"{BASE_URL}/pokemon/{api_id}", timeout=10).json()
 
 def battle_pokemon(first_api_id, second_api_id):
     """
         Do battle between 2 pokemons
     """
-    premierPokemon = get_pokemon_data(first_api_id)
-    secondPokemon = get_pokemon_data(second_api_id)
+    premier_pokemon = get_pokemon_data(first_api_id)
+    second_pokemon = get_pokemon_data(second_api_id)
     battle_result = 0
-    return premierPokemon if battle_result > 0 else secondPokemon if battle_result < 0 else {'winner': 'draw'}
-
+    if battle_result > 0:
+        return premier_pokemon
+    if battle_result < 0:
+        return second_pokemon
+    return {'winner': 'draw'}
 
 def battle_compare_stats(first_pokemon_stats, second_pokemon_stats):
     """
