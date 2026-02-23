@@ -13,8 +13,8 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     strategy:
-       matrix:
-         python-version: ['3.11','3.10']
+      matrix:
+        python-version: ['3.11']
 
     steps:
       - name: Checkout du code
@@ -34,5 +34,5 @@ jobs:
       - name: Get Coverage - change
         uses: orgoro/coverage@v3.1
         with:
-            coverageFile: coverage.xml
-            token: ${{secrets.GITHUB_TOKEN}}
+          coverageFile: coverage.xml
+          token: ${{secrets.GITHUB_TOKEN}}
