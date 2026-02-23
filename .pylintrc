@@ -1,5 +1,7 @@
 [MASTER]
-ignore=.venv
+ignore=
+    .venv,
+    test,
 init-hook='import sys; sys.path.append(".")'
 
 [MESSAGES CONTROL]
