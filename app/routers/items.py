@@ -4,7 +4,6 @@ from fastapi import APIRouter,  Depends
 from app.utils.utils import get_db
 from app import actions, schemas
 
-
 router = APIRouter()
 
 @router.get("/", response_model=List[schemas.Item])

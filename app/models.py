@@ -1,7 +1,8 @@
+# pylint: disable=too-few-public-methods
+
 from sqlalchemy import Column, ForeignKey, Integer, String, Date
 from sqlalchemy.orm import relationship
 from .sqlite import Base
-
 
 class Trainer(Base):
     """
